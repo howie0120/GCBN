@@ -9,17 +9,16 @@ import 'element-ui/lib/theme-chalk/index.css'
 
 
 import locale from 'element-ui/lib/locale/lang/en' // lang i18n
-import '@/icon'
+import '@/icons'
 import '../styles/index.scss'
 
-Vue.config.productionTip = false
-
 Vue.use(ElementUI, {locale})
+Vue.config.productionTip = false
 
 new Vue({
   el: '#app',
   router,
   store,
   render: h => h(App)
-});
+})
 

@@ -5,13 +5,18 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "start": "node server/index.js"
   },
   "dependencies": {
     "axios": "0.18.1",
+    "body-parser": "^1.20.2",
     "core-js": "3.6.5",
+    "cors": "^2.8.5",
     "element-ui": "2.13.2",
+    "express": "^4.18.2",
     "js-cookie": "2.2.0",
+    "mysql": "^2.18.1",
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",
     "path-to-regexp": "2.4.0",

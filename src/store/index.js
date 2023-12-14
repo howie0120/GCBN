@@ -17,5 +17,3 @@ const store = new Vuex.Store({
 })
 
 export default store
-
-// 操作。这是一个典型的 Vuex 设置，用于管理 Vue.js 应用程序的全局状态以及各个模块的状态。

@@ -1,3 +1,4 @@
+register.vue
 <template>
   <div class="register-container">
     <article class="header">
@@ -5,9 +6,9 @@
         <el-avatar icon="el-icon-user-solid" shape="circle" />
         <span class="login">
           <em class="bold">已經有註冊過了?</em>
-            <router-link to="/Login">
-              <el-button type="primary" size="mini">登入</el-button>
-            </router-link>
+          <a href="#/login">
+            <el-button type="primary" size="mini">登入</el-button>
+          </a>
         </span>
       </header>
     </article>
@@ -18,7 +19,7 @@
           :rules="rules"
           label-width="100px"
           autocomplete="off"
-          hide-required-asterisk="true"
+          :hide-required-asterisk="true"
           size="medium"
       >
         <div style="padding-top: 10px">
@@ -37,7 +38,7 @@
               <el-input v-model="ruleForm.pwd" type="password" />
             </el-col>
           </el-form-item>
-          <el-form-item label="確認密碼" prop="cpwd">
+          <el-form-item label="確認密碼密码" prop="cpwd">
             <el-col :span="10">
               <el-input v-model="ruleForm.cpwd" type="password" />
             </el-col>
@@ -46,8 +47,7 @@
             <el-button
                 type="primary"
                 style="width: 40%"
-                @click="register"
-            >註冊</el-button>
+                @click="submitForm('ruleForm')">註冊</el-button>
           </el-form-item>
         </div>
       </el-form>
@@ -58,6 +58,7 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   name: 'Register',
   data() {
@@ -68,7 +69,6 @@ export default {
       codeLoading: false,
       ruleForm: {
         email: '',
-        code: '',
         pwd: '',
         cpwd: ''
       },
@@ -77,7 +77,7 @@ export default {
           {
             required: true,
             type: 'email',
-            message: '電子郵件不能為空白',
+            message: '請輸入正確的電子郵件',
             trigger: 'blur'
           }
         ],
@@ -101,9 +101,9 @@ export default {
           {
             validator: (rule, value, callback) => {
               if (value === '') {
-                callback(new Error('请再次输入密码'))
+                callback(new Error('請再次輸入密碼'))
               } else if (value !== this.ruleForm.pwd) {
-                callback(new Error('兩次密碼不同，請重新輸入'))
+                callback(new Error('兩次密碼不一致'))
               } else {
                 callback()
               }
@@ -116,27 +116,30 @@ export default {
   },
   methods: {
     // 用戶註冊
-    register: function () {
+    submitForm(formName){
       this.$refs['ruleForm'].validate((valid) => {
         if (valid) {
-          // 移除密码加密逻辑
-          const user = {
+          axios.post('/api/user/add', {
             email: this.ruleForm.email,
-            password: this.ruleForm.pwd
-          }
-          // 调用 register 函数
-          register(this.ruleForm.code).then(res => {
-            this.$message({
-              showClose: true,
-              message: '注册成功，正在跳转到登录界面...',
-              type: 'success'
-            })
-            setTimeout(() => {
-              this.$router.push('/')
-            }, 2000)
-          }).catch(err => {
-            console.log(err.response.data.message)
-          })
+            password: this.ruleForm.pwd,
+          }).then((response) => {
+            const data = response.data;
+            console.log(data);
+
+            if (data.code === 0) {
+              localStorage.setItem('token', data.data.token);
+              window.location.href = '/';
+            } else if (data.code === 1) {
+              this.$message.error(data.message);
+            } else {
+              console.error('Unknown response code:', data.code);
+            }
+          }).catch((error) => {
+            console.error('Error during registration request:', error);
+          });
+        } else {
+          console.log('error submit!!');
+          return false
         }
       })
     }
@@ -197,7 +200,7 @@ $cursor: #fff;
 }
 </style>
 
-<style lang="scss">
+<style lang="scss" scoped>
 $bg: #2d3a4b;
 $dark_gray: #889aa4;
 $light_gray: #eee;

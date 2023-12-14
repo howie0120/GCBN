@@ -2,13 +2,15 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const userApi = require('./api/userApi');
 const cors = require('cors');
+const http = require('http');
 
 const app = express();
 const port = process.env.PORT || 8000;
+const server = http.createServer(app);
 
 app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json()); // 解析 application/json
+app.use(bodyParser.urlencoded({ extended: false })); // 解析 application/x-www-form-urlencoded
 
 // 設置跨域需求
 app.all('*', function (req, res, next) {
@@ -24,6 +26,6 @@ app.all('*', function (req, res, next) {
 app.use('/api', userApi);
 
 // 啟動服務器
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

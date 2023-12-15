@@ -8,12 +8,29 @@
 
     <!--  商品區  -->
     <h2 class="dashboard-title">熱門代購商品</h2>
-    <div class="product-list">
-      <div v-for="product in products" :key="product.id" class="product-item">
-        <img :src="product.image" :alt="product.name" class="product-image">
-        <h3 class="product-name">{{ product.name }}</h3>
-        <p class="product-description">{{ product.description }}</p>
-        <span class="product-price">{{ product.price }}</span>
+    <div class="product-container">
+
+      <div class="product-box">
+        <div class="product-box-top">
+          <div v-for="product in products" :key="product.id" class="product-item">
+            <img :src="product.image" :alt="product.name" class="product-image">
+            <div class="productBtn">
+            <!-- fontAwesome-->
+              <i class="fa fa-bookmark-o" style="font-size:24px"></i>
+            </div>
+        </div>
+        <div class="product-box-bottom">
+
+          </div>
+
+        </div>
+      </div>
+      <div class="product-list">
+        <div v-for="product in products" :key="product.id" class="product-item">
+          <img :src="product.image" :alt="product.name" class="product-image">
+          <h3 class="product-name">{{ product.name }}</h3>
+          <span class="product-price">{{ product.price }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -32,13 +49,14 @@ export default {
 
   data() {
     return {
+      // 測試資料
       products: [
         {
-          id: 1,
-          name: '商品1',
-          description: '這是商品1的描述',
-          price: '$50.00',
-          image: 'https://placekitten.com/200/200' // 假的圖片 URL
+          id: 2,
+          name: '商品2',
+          description: '這是商品2的描述',
+          price: '$30.00',
+          image: 'https://placekitten.com/201/201' // 假的圖片 URL
         },
         {
           id: 2,
@@ -47,7 +65,41 @@ export default {
           price: '$30.00',
           image: 'https://placekitten.com/201/201' // 假的圖片 URL
         },
-        // ... 可以繼續添加更多商品
+        {
+          id: 2,
+          name: '商品2',
+          description: '這是商品2的描述',
+          price: '$30.00',
+          image: 'https://placekitten.com/201/201' // 假的圖片 URL
+        },
+        {
+            id: 2,
+            name: '商品2',
+            description: '這是商品2的描述',
+            price: '$30.00',
+            image: 'https://placekitten.com/201/201' // 假的圖片 URL
+          },
+        {
+          id: 2,
+          name: '商品2',
+          description: '這是商品2的描述',
+          price: '$30.00',
+          image: 'https://placekitten.com/201/201' // 假的圖片 URL
+        },
+        {
+          id: 2,
+          name: '商品2',
+          description: '這是商品2的描述',
+          price: '$30.00',
+          image: 'https://placekitten.com/201/201' // 假的圖片 URL
+        },
+        {
+          id: 2,
+          name: '商品2',
+          description: '這是商品2的描述',
+          price: '$30.00',
+          image: 'https://placekitten.com/201/201' // 假的圖片 URL
+        },
       ]
     };
   }
@@ -58,11 +110,11 @@ export default {
 <style lang="scss" scoped>
 .dashboard {
   &-container {
-    margin: 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
 
+     // 橫幅樣式
     .banner {
       height: 35em;
       width: 80em;
@@ -87,21 +139,76 @@ export default {
     margin-bottom: 20px;
   }
 
+  // 商品區
+  .product-container{
+    display: inline-block;
+    flex-direction: row;
+
+  }
+
+  .product-box {
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 30px 15px;
+    display: inline-block;
+  }
+  &:hover {
+    .productBtn {
+      bottom: 10px
+    }
+
+  }
+
+  .top {
+    height: 160px;
+    overflow: hidden;
+    .product-image {
+      width: 100%;
+      height: auto;
+      position: absolute;
+      background-size: cover;
+      left: 0;
+      top: 0;
+      border-radius: 5px 5px 0 0;
+    }
+    .productBtn{
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      position: absolute;
+      left: 15px;
+      bottom: -50px;
+      background-color: #fff;
+      cursor: pointer;
+      transition: bottom 0.3s;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+      color: #EB5E00;
+    }
+    i {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 22px;
+      &:hover{
+        background-color: #EB5E00;
+        color: white;
+      }
+    }
+  }
+
+
   .product-list {
-    display: flex;
-    flex-wrap: wrap;
+
+    //gap: 20px;
+    overflow-x: auto; // 如果商品太多，提供水平滾動條
   }
 
   .product-item {
-    width: 200px;
-    margin: 10px;
+    width: calc(33.33% - 20px); // 根據一行中商品數量調整寬度
+    margin-bottom: 20px;
     padding: 15px;
     border: 1px solid #ddd;
-  }
-
-  .product-image {
-    width: 100%;
-    height: auto;
   }
 
   .product-name {
@@ -118,7 +225,7 @@ export default {
     font-size: 18px;
     font-weight: bold;
     margin-top: 10px;
-    color: #ff6600; /* 橘色價格 */
+    color: #ff6600;
   }
 }
 </style>

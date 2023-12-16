@@ -101,6 +101,7 @@ export default {
 <style lang="scss" scoped>
 .dashboard {
   &-container {
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -129,70 +130,6 @@ export default {
     font-size: 24px;
     margin-bottom: 20px;
   }
-
-  // 商品區
-  .product-container {
-    flex-wrap: wrap;
-    justify-content: space-between;
-    position: relative;
-  }
-
-  .product-box {
-    float: left;
-    border-radius: 5px;
-    cursor: pointer;
-    margin: 30px 0; // 調整 margin，不再使用左右 margin
-    flex: 1;
-    width: calc(33.33% - 20px); // 根據一行中商品數量調整寬度
-    //background-color: #fff;
-    box-sizing: border-box; // 防止寬度超出
-    display: inline-block;
-  }
-  .product-box:hover {
-    .productBtn {
-      bottom: 10px;
-    }
-  }
-
-  .top {
-    height: 160px;
-    overflow: hidden;
-    .product-image {
-      width: 100%;
-      height: auto;
-      position: absolute;
-      background-size: cover;
-      left: 0;
-      top: 0;
-      border-radius: 5px 5px 0 0;
-    }
-    .productBtn{
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      position: absolute;
-      left: 15px;
-      bottom: -50px;
-      background-color: #fff;
-      cursor: pointer;
-      transition: bottom 0.3s;
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
-      color: #EB5E00;
-    }
-    i {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 22px;
-      &:hover{
-        background-color: #EB5E00;
-        color: white;
-      }
-    }
-  }
-
-
   .product-list {
 
     //gap: 20px;
@@ -225,6 +162,68 @@ export default {
     color: #ff6600;
     letter-spacing: 1px;
     padding-left: 5px;
+  }
+}
+
+// 商品區
+.product-container {
+  width: 80em;
+  display: flex;
+  flex-wrap: wrap;  /* 允許換行 */
+  justify-content: space-between;
+  //margin: 0 -15px;
+}
+
+.product-box {
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 30px -5px; // 調整 margin，不再使用左右 margin
+  width: calc(33.33%); // 根據一行中商品數量調整寬度
+  box-sizing: border-box; // 防止寬度超出
+  display: inline-block;
+  flex-direction: column;
+  &:hover {
+    .productBtn {
+      bottom: 10px
+    }
+  }
+}
+
+.top {
+  height: 160px;
+  overflow: hidden;
+  .product-image {
+    width: 100%;
+    height: auto;
+    position: absolute;
+    background-size: cover;
+    left: 0;
+    top: 0;
+    border-radius: 5px 5px 0 0;
+  }
+  .productBtn{
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    position: absolute;
+    left: 15px;
+    bottom: -50px;
+    background-color: #fff;
+    cursor: pointer;
+    transition: bottom 0.3s;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+    color: #EB5E00;
+  }
+  i {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 22px;
+    &:hover{
+      background-color: #EB5E00;
+      color: white;
+    }
   }
 }
 </style>

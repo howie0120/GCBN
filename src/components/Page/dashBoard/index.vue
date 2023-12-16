@@ -9,25 +9,16 @@
     <!--  商品區  -->
     <h2 class="dashboard-title">熱門代購商品</h2>
     <div class="product-container">
-
-      <div class="product-box">
+      <div v-for="product in products" :key="product.id" class="product-box">
         <div class="product-box-top">
-          <div v-for="product in products" :key="product.id" class="product-item">
-            <img :src="product.image" :alt="product.name" class="product-image">
+          <div class="product-item">
+            <img :src="product.image" :alt="product.image" class="product-image">
             <div class="productBtn">
-            <!-- fontAwesome-->
               <i class="fa fa-bookmark-o" style="font-size:24px"></i>
             </div>
+          </div>
         </div>
         <div class="product-box-bottom">
-
-          </div>
-
-        </div>
-      </div>
-      <div class="product-list">
-        <div v-for="product in products" :key="product.id" class="product-item">
-          <img :src="product.image" :alt="product.name" class="product-image">
           <h3 class="product-name">{{ product.name }}</h3>
           <span class="product-price">{{ product.price }}</span>
         </div>
@@ -56,49 +47,49 @@ export default {
           name: '商品2',
           description: '這是商品2的描述',
           price: '$30.00',
-          image: 'https://placekitten.com/201/201' // 假的圖片 URL
+          image: 'https://source.unsplash.com/202x202/?product' // 假的圖片 URL
         },
         {
           id: 2,
           name: '商品2',
           description: '這是商品2的描述',
           price: '$30.00',
-          image: 'https://placekitten.com/201/201' // 假的圖片 URL
+          image: 'https://source.unsplash.com/202x202/?product' // 假的圖片 URL
         },
         {
           id: 2,
           name: '商品2',
           description: '這是商品2的描述',
           price: '$30.00',
-          image: 'https://placekitten.com/201/201' // 假的圖片 URL
-        },
-        {
-            id: 2,
-            name: '商品2',
-            description: '這是商品2的描述',
-            price: '$30.00',
-            image: 'https://placekitten.com/201/201' // 假的圖片 URL
-          },
-        {
-          id: 2,
-          name: '商品2',
-          description: '這是商品2的描述',
-          price: '$30.00',
-          image: 'https://placekitten.com/201/201' // 假的圖片 URL
+          image: 'https://source.unsplash.com/202x202/?product' // 假的圖片 URL
         },
         {
           id: 2,
           name: '商品2',
           description: '這是商品2的描述',
           price: '$30.00',
-          image: 'https://placekitten.com/201/201' // 假的圖片 URL
+          image: 'https://source.unsplash.com/202x202/?product' // 假的圖片 URL
         },
         {
           id: 2,
           name: '商品2',
           description: '這是商品2的描述',
           price: '$30.00',
-          image: 'https://placekitten.com/201/201' // 假的圖片 URL
+          image: 'https://source.unsplash.com/202x202/?product' // 假的圖片 URL
+        },
+        {
+          id: 2,
+          name: '商品2',
+          description: '這是商品2的描述',
+          price: '$30.00',
+          image: 'https://source.unsplash.com/202x202/?product' // 假的圖片 URL
+        },
+        {
+          id: 2,
+          name: '商品2',
+          description: '這是商品2的描述',
+          price: '$30.00',
+          image: 'https://source.unsplash.com/202x202/?product' // 假的圖片 URL
         },
       ]
     };
@@ -114,9 +105,9 @@ export default {
     flex-direction: column;
     align-items: center;
 
-     // 橫幅樣式
+    // 橫幅樣式
     .banner {
-      height: 35em;
+      height: 40em;
       width: 80em;
       display: flex;
       align-items: center;
@@ -140,23 +131,27 @@ export default {
   }
 
   // 商品區
-  .product-container{
-    display: inline-block;
-    flex-direction: row;
-
+  .product-container {
+    flex-wrap: wrap;
+    justify-content: space-between;
+    position: relative;
   }
 
   .product-box {
+    float: left;
     border-radius: 5px;
     cursor: pointer;
-    margin: 30px 15px;
+    margin: 30px 0; // 調整 margin，不再使用左右 margin
+    flex: 1;
+    width: calc(33.33% - 20px); // 根據一行中商品數量調整寬度
+    //background-color: #fff;
+    box-sizing: border-box; // 防止寬度超出
     display: inline-block;
   }
-  &:hover {
+  .product-box:hover {
     .productBtn {
-      bottom: 10px
+      bottom: 10px;
     }
-
   }
 
   .top {
@@ -214,6 +209,8 @@ export default {
   .product-name {
     font-size: 16px;
     margin-top: 10px;
+    letter-spacing: 1px;
+    padding-left: 5px;
   }
 
   .product-description {
@@ -226,6 +223,8 @@ export default {
     font-weight: bold;
     margin-top: 10px;
     color: #ff6600;
+    letter-spacing: 1px;
+    padding-left: 5px;
   }
 }
 </style>

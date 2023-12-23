@@ -23,6 +23,11 @@ export const constantRoutes = [
         hidden: true
     },
     {
+        path: '/cart',
+        component: () => import('@/components/Page/cart'),
+        hidden: true
+    },
+    {
         path: '/',
         component: Layout,
         redirect: '/dashboard',
@@ -33,6 +38,30 @@ export const constantRoutes = [
             meta: { title: 'Dashboard', icon: 'dashboard' }
         }]
     },
+
+    {
+        path: '/initiate',
+        component: Layout,
+        redirect: "/initiate/table",
+        name: "Initiate",
+        meta: { title: 'Initiate', icon: 'tree'},
+        children: [
+            {
+                path: 'index',
+                name: 'Form',
+                component: () => import('@/components/Page/form/index'),
+                meta: { title: 'Form', icon: 'form' }
+            },
+            {
+                path: 'tree',
+                name: 'Tree',
+                component: () => import('@/views/tree/index'),
+                meta: { title: 'Tree', icon: 'tree' }
+            }
+        ]
+
+    }
+
 ]
 const createRouter = () => new Router({
     // mode: 'history', // require service support

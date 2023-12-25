@@ -5,11 +5,11 @@ class DBHelper{
     getConn(){
         let conn = mysql.createConnection({
             // 資料庫配置
-            host:'127.0.0.1',
+            host:'sql12.freemysqlhosting.net',
             port:'3306',
-            user:'root',
-            password:'',
-            database:'test'
+            user:'sql12672704',
+            password:'p1zStN9cLh',
+            database:'sql12672704'
         });
         conn.connect();
         return conn;

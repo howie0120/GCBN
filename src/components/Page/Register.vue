@@ -1,62 +1,40 @@
-register.vue
 <template>
   <div class="register-container">
-    <article class="header">
-      <header>
-        <el-avatar icon="el-icon-user-solid" shape="circle" />
-        <span class="login">
-          <em class="bold">已經有註冊過了?</em>
-          <a href="#/login">
-            <el-button type="primary" size="mini">登入</el-button>
-          </a>
-        </span>
-      </header>
-    </article>
-    <section>
-      <el-form
-          ref="ruleForm"
-          :model="ruleForm"
-          :rules="rules"
-          label-width="100px"
-          autocomplete="off"
-          :hide-required-asterisk="true"
-          size="medium"
-      >
-        <div style="padding-top: 10px">
-          <el-form-item label="電子信箱" prop="email">
-            <el-col :span="10">
-              <el-input
-                  v-model="ruleForm.email"
-                  placeholder="輸入電子郵件"
-              />
-            </el-col>
 
-            <span class="status">{{ statusMsg }}</span>
-          </el-form-item>
-          <el-form-item label="密碼" prop="pwd" :rules="rules.pwd">
-            <el-col :span="10">
-              <el-input v-model="ruleForm.pwd" type="password" />
-            </el-col>
-          </el-form-item>
-          <el-form-item label="確認密碼密码" prop="cpwd">
-            <el-col :span="10">
-              <el-input v-model="ruleForm.cpwd" type="password" />
-            </el-col>
-          </el-form-item>
-          <el-form-item>
-            <el-button
-                type="primary"
-                style="width: 40%"
-                @click="submitForm('ruleForm')">註冊</el-button>
-          </el-form-item>
-        </div>
-      </el-form>
-    </section>
 
-    <div class="error">{{ error }}</div>
+    <!-- 註冊表單 -->
+    <el-form
+        ref="ruleForm"
+        :model="ruleForm"
+        :rules="rules"
+        class="register-form"
+        label-position="left"
+    >
+      <!-- 電子信箱 -->
+      <el-form-item label="電子信箱" prop="email">
+        <el-input v-model="ruleForm.email" placeholder="輸入電子郵件" />
+      </el-form-item>
+
+      <!-- 密碼 -->
+      <el-form-item label="密碼" prop="pwd" :rules="rules.pwd">
+        <el-input v-model="ruleForm.pwd" type="password" />
+      </el-form-item>
+
+      <!-- 確認密碼 -->
+      <el-form-item label="確認密碼" prop="cpwd">
+        <el-input v-model="ruleForm.cpwd" type="password" />
+      </el-form-item>
+
+      <!-- 提交按鈕 -->
+      <el-form-item>
+        <el-button
+            type="primary"
+            class="custom-button"
+            @click="submitForm('ruleForm')">註冊</el-button>
+      </el-form-item>
+    </el-form>
   </div>
 </template>
-
 <script>
 import axios from "axios";
 export default {
@@ -163,10 +141,6 @@ $cursor: #fff;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh; // 使容器擴展到整個視窗高度
-  width: 100%;
-  background-color: $bg;
-  overflow: hidden;
 
   .el-input {
     display: inline-block;
@@ -206,11 +180,6 @@ $dark_gray: #889aa4;
 $light_gray: #eee;
 
 .register-container {
-  min-height: 100%;
-  width: 100%;
-  background-color: $bg;
-  overflow: hidden;
-
   .header {
     border-bottom: 2px solid rgb(235, 232, 232);
     min-width: 980px;
@@ -262,6 +231,32 @@ $light_gray: #eee;
         margin-right: 16px;
       }
     }
+  }
+}
+.register-container {
+
+  .register-form {
+    background-color: #304156;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 520px;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .custom-button {
+    background-color: #3c89da;
+    border: none;
+    color: white;
+    width: 100%;
+  }
+
+  .el-form-item {
+    margin-bottom: 20px;
+  }
+
+  .el-input {
+    width: 100%;
   }
 }
 </style>

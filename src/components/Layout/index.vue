@@ -1,5 +1,9 @@
 <template>
   <div :class="classObj" class="app-wrapper">
+
+    <!-- 登入卡片，當用戶未登入時顯示 -->
+    <auth v-if="!isLoggedIn" class="login-card"/>
+
     <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
     <sidebar class="sidebar-container" />
     <div class="main-container">
@@ -12,18 +16,24 @@
 </template>
 
 <script>
+import auth from '@/components/Page/auth/index.vue';
 import { Navbar, Sidebar, AppMain } from '@/components/Layout/Main'
 import ResizeMixin from './mixin/ResizeHandler'
 
 export default {
   name: 'Layout',
   components: {
+    auth,
     Navbar,
     Sidebar,
     AppMain
   },
   mixins: [ResizeMixin],
   computed: {
+    isLoggedIn() {
+      // 獲取用戶登入狀態
+      return this.$store.state.user.isLoggedIn;
+    },
     sidebar() {
       return this.$store.state.app.sidebar
     },
@@ -53,6 +63,19 @@ export default {
 <style lang="scss" scoped>
 @import "../../../styles/mixin";
 @import "../../../styles/variables";
+
+.login-card {
+  position: fixed; /* 固定定位 */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
+  z-index: 1000; /* 确保在最上层 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 .app-wrapper {
   @include clearfix;

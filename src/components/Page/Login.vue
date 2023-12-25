@@ -1,11 +1,7 @@
-User
 <template>
   <div class="login-container">
+<!--    登入表單-->
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
-
-      <div class="title-container">
-        <h3 class="title">Login Form</h3>
-      </div>
 
       <el-form-item prop="username">
         <span class="svg-container">
@@ -42,10 +38,7 @@ User
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登入</el-button>
-      <router-link to="/register">
-        <el-button type="primary" style="width:100%;margin-bottom:30px;">註冊</el-button>
-      </router-link>
+      <el-button :loading="loading" type="primary" class="custom-button" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登入</el-button>
     </el-form>
   </div>
 </template>
@@ -93,6 +86,9 @@ export default {
     }
   },
   methods: {
+    toggleForm(isLogin) {
+      this.isLoginForm = isLogin;
+    },
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -143,9 +139,9 @@ $cursor: #fff;
 
     input {
       background: transparent;
-      border: 0px;
+      border: 0;
       -webkit-appearance: none;
-      border-radius: 0px;
+      border-radius: 0;
       padding: 12px 5px 12px 15px;
       color: $light_gray;
       height: 47px;
@@ -172,18 +168,29 @@ $bg:#2d3a4b;
 $dark_gray:#889aa4;
 $light_gray:#eee;
 
+.custom-button {
+  background-color: #3c89da; // 按钮背景色
+  border: none;
+  color: white; // 文字颜色
+  width: 100%;
+}
+
+
 .login-container {
   min-height: 100%;
   width: 100%;
-  background-color: $bg;
-  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.6); /* 半透明背景 */
 
   .login-form {
-    position: relative;
+    background-color: #304156;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     width: 520px;
     max-width: 100%;
-    padding: 160px 35px 0;
-    margin: 75px auto 0;
+    margin: 0 auto;
     overflow: hidden;
   }
 
@@ -207,18 +214,6 @@ $light_gray:#eee;
     display: inline-block;
   }
 
-  .title-container {
-    position: relative;
-
-    .title {
-      font-size: 26px;
-      color: $light_gray;
-      margin: 0 auto 40px auto;
-      text-align: center;
-      font-weight: bold;
-    }
-  }
-
   .show-pwd {
     position: absolute;
     right: 10px;
@@ -228,5 +223,15 @@ $light_gray:#eee;
     cursor: pointer;
     user-select: none;
   }
+}
+
+.show-pwd {
+  position: absolute;
+  right: 10px;
+  top: 7px;
+  font-size: 16px;
+  color: $dark_gray;
+  cursor: pointer;
+  user-select: none;
 }
 </style>

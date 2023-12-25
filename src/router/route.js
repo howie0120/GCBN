@@ -14,12 +14,12 @@ export const constantRoutes = [
     },
     {
         path: '/login',
-        component: () => import('@/components/Page/Login.vue'),
+        component: () => import('@/components/Page/auth/Login.vue'),
         hidden: true
     },
     {
         path: '/register',
-        component: () =>import('@/components/Page/Register.vue'),
+        component: () =>import('@/components/Page/auth/Register.vue'),
         hidden: true
     },
     {

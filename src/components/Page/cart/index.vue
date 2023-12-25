@@ -18,11 +18,16 @@
 <script>
 export default {
   name: 'Cart',
+  data() {
+    return {
+      // 使用假數據
+      cartItems: [
+        { id: 1, name: '商品1', quantity: 2, price: 100 },
+        { id: 2, name: '商品2', quantity: 1, price: 200 }
+      ]
+    };
+  },
   computed: {
-    cartItems() {
-      // 從 Vuex store 獲取購物車內容
-      return this.$store.state.cart;
-    },
     totalPrice() {
       return this.cartItems.reduce(
           (total, item) => total + item.price * item.quantity,
@@ -33,7 +38,7 @@ export default {
   methods: {
     removeFromCart(item) {
       // 移除購物車中的商品
-      this.$store.commit('REMOVE_FROM_CART', item);
+      this.cartItems = this.cartItems.filter(i => i.id !== item.id);
     },
     checkout() {
       // 結帳功能的實現
@@ -43,6 +48,35 @@ export default {
   },
 };
 </script>
+
+<!--<script>-->
+<!--export default {-->
+<!--  name: 'Cart',-->
+<!--  computed: {-->
+<!--    cartItems() {-->
+<!--      // 從 Vuex store 獲取購物車內容-->
+<!--      return this.$store.state.cart;-->
+<!--    },-->
+<!--    totalPrice() {-->
+<!--      return this.cartItems.reduce(-->
+<!--          (total, item) => total + item.price * item.quantity,-->
+<!--          0-->
+<!--      );-->
+<!--    },-->
+<!--  },-->
+<!--  methods: {-->
+<!--    removeFromCart(item) {-->
+<!--      // 移除購物車中的商品-->
+<!--      this.$store.commit('REMOVE_FROM_CART', item);-->
+<!--    },-->
+<!--    checkout() {-->
+<!--      // 結帳功能的實現-->
+<!--      console.log('結帳');-->
+<!--      // 重定向到結帳頁面或處理結帳邏輯-->
+<!--    },-->
+<!--  },-->
+<!--};-->
+<!--</script>-->
 
 <style scoped>
 .cart-container {

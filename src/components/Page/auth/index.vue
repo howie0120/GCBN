@@ -82,13 +82,6 @@ export default {
       color: #fff;
     }
 
-    &.left {
-      border-right: 1px solid #ddd; /* 左侧标题右边的分隔线 */
-    }
-
-    &.right {
-      border-left: 1px solid #ddd; /* 右侧标题左边的分隔线 */
-    }
   }
 }
 </style>

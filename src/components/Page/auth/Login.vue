@@ -10,7 +10,7 @@
         <el-input
             ref="username"
             v-model="loginForm.username"
-            placeholder="Username"
+            placeholder="輸入信箱"
             name="username"
             type="text"
             tabindex="1"
@@ -27,15 +27,12 @@
             ref="password"
             v-model="loginForm.password"
             :type="passwordType"
-            placeholder="Password"
+            placeholder="請輸入密碼"
             name="password"
             tabindex="2"
             auto-complete="on"
             @keyup.enter.native="handleLogin"
         />
-        <span class="show-pwd" @click="showPwd">
-          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-        </span>
       </el-form-item>
 
       <el-button :loading="loading" type="primary" class="custom-button" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登入</el-button>
@@ -44,77 +41,41 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
+
+import axios from 'axios';
 
 export default {
   name: 'Login',
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
-      } else {
-        callback()
-      }
-    }
-    const validatePassword = (rule, value, callback) => {
-      if (value.length < 8) {
-        callback(new Error('密碼不得低於8碼'))
-      } else {
-        callback()
-      }
-    }
     return {
       loginForm: {
         username: '',
         password: ''
-      },
-      loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
-      },
-      loading: false,
-      passwordType: 'password',
-      redirect: undefined
-    }
-  },
-  watch: {
-    $route: {
-      handler: function(route) {
-        this.redirect = route.query && route.query.redirect
-      },
-      immediate: true
+      }
     }
   },
   methods: {
     toggleForm(isLogin) {
       this.isLoginForm = isLogin;
     },
-    showPwd() {
-      if (this.passwordType === 'password') {
-        this.passwordType = ''
-      } else {
-        this.passwordType = 'password'
-      }
-      this.$nextTick(() => {
-        this.$refs.password.focus()
-      })
-    },
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
-            this.loading = false
-          }).catch(() => {
-            this.loading = false
-          })
-        } else {
-          console.log('error submit!!')
-          return false
+      this.$refs.loginForm.validate(async (valid) => {
+        if (!valid) return;
+        this.loading = true;
+        try {
+          const response = await axios.post('http://localhost:8000/api/login', {
+            email: this.loginForm.username,
+            password: this.loginForm.password
+          });
+          this.$store.commit('user/SET_IS_LOGGED_IN', true);
+          this.$message.success("登入成功！");
+          this.loading = false;
+        } catch (error) {
+          this.$message.success("登入失敗！");
+          this.loading = false;
         }
-      })
-    }
+      });
+    },
   }
 
 }
@@ -124,12 +85,6 @@ export default {
 $bg: #283443;
 $light_gray: #fff;
 $cursor: #fff;
-
-@supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
-  .login-container .el-input input {
-    color: $cursor;
-  }
-}
 
 /* reset element-ui css */
 .login-container {

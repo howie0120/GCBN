@@ -8,7 +8,8 @@ const getDefaultState = () => {
     return {
         token: getToken(),
         name: '',
-        avatar: ''
+        avatar: '',
+        isLoggedIn: false
     }
 }
 
@@ -26,7 +27,10 @@ const mutations = {
     },
     SET_AVATAR: (state, avatar) => {
         state.avatar = avatar
-    }
+    },
+    SET_IS_LOGGED_IN: (state, isLoggedIn) => {
+        state.isLoggedIn = isLoggedIn;
+    },
 }
 
 const actions = {
@@ -38,6 +42,7 @@ const actions = {
                 const { data } = response
                 commit('SET_TOKEN', data.token)
                 setToken(data.token)
+                commit('SET_IS_LOGGED_IN', true);
                 resolve()
             }).catch(error => {
                 reject(error)
@@ -88,6 +93,7 @@ const actions = {
             resolve()
         })
     }
+
 }
 
 export default {

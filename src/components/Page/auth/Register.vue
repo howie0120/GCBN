@@ -97,29 +97,35 @@ export default {
     submitForm(formName){
       this.$refs['ruleForm'].validate((valid) => {
         if (valid) {
-          axios.post('/api/user/add', {
+          axios.post('http://localhost:8000/api/add', {
             email: this.ruleForm.email,
             password: this.ruleForm.pwd,
           }).then((response) => {
+
             const data = response.data;
             console.log(data);
+            if (data === 0) {
+              this.$message.success("註冊成功！");
+              this.resetForm();
 
-            if (data.code === 0) {
-              localStorage.setItem('token', data.data.token);
-              window.location.href = '/';
-            } else if (data.code === 1) {
-              this.$message.error(data.message);
+              // 觸發一個自定義事件，通知auth切換到登入表單
+              this.$emit('registered');
+            } else if (data === -1) {
+              this.$message.error("此信箱已被註冊過！");
             } else {
-              console.error('Unknown response code:', data.code);
+              this.$message.error("未知的錯誤！");
             }
-          }).catch((error) => {
-            console.error('Error during registration request:', error);
-          });
+          })
         } else {
           console.log('error submit!!');
           return false
         }
       })
+    },
+    resetForm() {
+      this.ruleForm.email = '';
+      this.ruleForm.pwd = '';
+      this.ruleForm.cpwd = '';
     }
   }
 }
@@ -145,7 +151,7 @@ $cursor: #fff;
   .el-input {
     display: inline-block;
     height: 47px;
-    width: 95%;
+    width: 100%;
 
     input {
       background: rgba(0, 0, 0, 0.1);
@@ -165,6 +171,7 @@ $cursor: #fff;
   }
 
   .el-form-item {
+    margin-bottom: 20px;
     label {
       font-style: normal;
       font-size: 12px;
@@ -198,6 +205,21 @@ $light_gray: #eee;
         font-style: normal;
         color: $light_gray;
       }
+    }
+    .register-form {
+      background-color: #304156;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      width: 520px;
+      max-width: 100%;
+      margin: 0 auto;
+    }
+
+    .custom-button {
+      background-color: #3c89da;
+      border: none;
+      color: white;
+      width: 100%;
     }
   }
 
@@ -248,14 +270,6 @@ $light_gray: #eee;
     background-color: #3c89da;
     border: none;
     color: white;
-    width: 100%;
-  }
-
-  .el-form-item {
-    margin-bottom: 20px;
-  }
-
-  .el-input {
     width: 100%;
   }
 }

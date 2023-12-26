@@ -11,30 +11,37 @@ const DBHelper = require('../mysql/database');
 router.post('/add', (req, res) => {
     let conn = new DBHelper().getConn();
     const params = req.body;
-    const sel_sql = $sql.user.select + " where email = '" + params.email + "'";
+    const sel_sql = $sql.user.select;
     const add_sql = $sql.user.add;
 
-    // console.log(sel_sql);
+    console.log(sel_sql);
 
-    conn.query(sel_sql, params.email, (error, results) => {
-        if(error) {
+    conn.query(sel_sql,  [params.email], (error, results) => {
+        if (error) {
             console.log(error);
+            res.status(500).send("Server error");
+            conn.end();
+            return;
         }
-        if (results.length !== 0 && params.email === results[0].email) {
-            res.send("-1");   // 電子郵件已存在
-        } else {
-            conn.query(add_sql, [params.email, params.password], (err, result) => {
-                if (err) {
-                    console.log(err);
-                } else{
-                    console.log(result);
-                    res.send("0"); // 用戶創建成功
-                }
-            });
+
+        if (results.length !== 0) {
+            res.send("-1"); // 電子郵件已存在
+            conn.end();
+            return;
         }
+        // 插入新用户
+        conn.query(add_sql, [params.email, params.password], (err, result) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send("Server error");
+            } else {
+                console.log(result);
+                res.send("0"); // 用戶創建成功
+            }
+            conn.end();
+        })
     });
-    conn.end();
-});
+})
 
 router.post ('/selectUser', (req, res) => {
     const sel_sql = $sql.user.select;
@@ -49,6 +56,6 @@ router.post ('/selectUser', (req, res) => {
         }
     });
     conn.end();
-});
+})
 
 module.exports = router;

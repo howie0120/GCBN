@@ -5,7 +5,7 @@
         <h3 class="title" :class="{ active: isLoginForm }" @click="toggleForm(true)">Login Form</h3>
         <h3 class="title" :class="{ active: !isLoginForm }" @click="toggleForm(false)">Register</h3>
       </div>
-      <component :is="currentFormComponent"></component>
+      <component :is="currentFormComponent" @registered="handleRegistrationCompleted"></component>
     </div>
   </div>
 </template>
@@ -28,6 +28,10 @@ export default {
   methods: {
     toggleForm(isLoginForm) {
       this.isLoginForm = isLoginForm;
+    },
+    handleRegistrationCompleted() {
+      // 註冊完成後切換到登入表單
+      this.isLoginForm = true;
     }
   },
   components: {

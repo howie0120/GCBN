@@ -8,7 +8,11 @@ const app = express();
 const port = process.env.PORT || 8000;
 const server = http.createServer(app);
 
-app.use(cors());
+app.use(cors({
+    origin: '*', // 允许任何来源
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // 允许的方法
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(bodyParser.json()); // 解析 application/json
 app.use(bodyParser.urlencoded({ extended: false })); // 解析 application/x-www-form-urlencoded
 
@@ -25,7 +29,7 @@ app.all('*', function (req, res, next) {
 // 後端api路由
 app.use('/api', userApi);
 
-// 啟動服務器
+// server掛載在port上進行監聽
 server.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

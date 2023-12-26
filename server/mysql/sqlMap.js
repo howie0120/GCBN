@@ -1,9 +1,8 @@
 var sqlMap = {
     user: {
         // 添加使用者
-        add: 'insert into users(name, age) values (?, ?)',
-        // 查詢使用者
-        select: 'select * from user where name like "%"?"%"'
+        add: 'insert into Users(Email, Password) values (?, ?)',
+        select: 'select * from Users where Email = ?'
     }
 }
 

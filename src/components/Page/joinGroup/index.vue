@@ -72,7 +72,7 @@ export default {
   methods: {
     async fetchGroupBuys() {
       try {
-        const response = await axios.get('/api/groupbuys');
+        const response = await axios.get('http://localhost:8000/api/groupbuys');
         this.groupBuys = response.data;
       } catch (error) {
         console.error('Error fetching group buys:', error);

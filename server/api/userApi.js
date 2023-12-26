@@ -82,7 +82,7 @@ router.post('/login', (req, res) => {
     });
 });
 
-router().get('/groupbuys', async (req, res) => {
+router.get('/groupbuys', async (req, res) => {
     try {
         // 假设 getGroupBuys 是从数据库获取数据的函数
         const groupBuys = await getGroupBuys();
@@ -91,6 +91,21 @@ router().get('/groupbuys', async (req, res) => {
         console.error(error);
         res.status(500).send("Internal Server Error");
     }
+});
+
+router.get('/products', (req, res) => {
+    let conn = new DBHelper().getConn();
+    const query = 'SELECT ProductName, Description, Price, ImageUrl FROM Products';
+
+    conn.query(query, (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Server error');
+        } else {
+            res.json(results);
+        }
+        conn.end();
+    });
 });
 
 module.exports = router;

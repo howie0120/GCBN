@@ -4,22 +4,21 @@
     <div class="banner">
       <img src="/banner.png" alt="Banner Image" class="banner-image">
     </div>
-
     <div class="dashboard-container">
       <!-- 商品區 -->
       <h2 class="dashboard-title">熱門代購商品</h2>
       <div class="product-container">
-        <div v-for="product in products" :key="product.id" class="product-box">
+        <div v-for="product in products" :key="product.ProductID" class="product-box">
           <div class="product-box-top">
-            <img :src="product.image" :alt="product.name" class="product-image">
+            <img :src="product.ImageUrl" :alt="product.ImageUrl" class="product-image">
             <div class="productBtn">
               <i class="fa fa-bookmark-o"></i>
             </div>
           </div>
           <div class="product-box-bottom">
-            <h3 class="product-name">{{ product.name }}</h3>
+            <h3 class="product-name">{{ product.productName }}</h3>
             <div class="texts">
-              <span class="product-price">{{ product.price }}</span>
+              <span class="product-price">${{ product.Price }}</span>
             </div>
             <button class="btn">購買</button>
             <div class="BoxBar"></div>
@@ -31,89 +30,35 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import axios from 'axios';
 
 export default {
   name: 'Dashboard',
-  computed: {
-    ...mapGetters([
-      'name'
-    ])
-  },
+
 
   data() {
     return {
-      // 測試資料
-      products: [
-        {
-          id: 2,
-          name: '商品2',
-          description: '這是商品2的描述',
-          price: '$30.00',
-          image: 'https://source.unsplash.com/202x202/?product' // 假的圖片 URL
-        },
-        {
-          id: 2,
-          name: '商品2',
-          description: '這是商品2的描述',
-          price: '$30.00',
-          image: 'https://source.unsplash.com/202x202/?product' // 假的圖片 URL
-        },
-        {
-          id: 2,
-          name: '商品2',
-          description: '這是商品2的描述',
-          price: '$30.00',
-          image: 'https://source.unsplash.com/202x202/?product' // 假的圖片 URL
-        },
-        {
-          id: 2,
-          name: '商品2',
-          description: '這是商品2的描述',
-          price: '$30.00',
-          image: 'https://source.unsplash.com/202x202/?product' // 假的圖片 URL
-        },
-        {
-          id: 2,
-          name: '商品2',
-          description: '這是商品2的描述',
-          price: '$30.00',
-          image: 'https://source.unsplash.com/202x202/?product' // 假的圖片 URL
-        },
-        {
-          id: 2,
-          name: '商品2',
-          description: '這是商品2的描述',
-          price: '$30.00',
-          image: 'https://source.unsplash.com/202x202/?product' // 假的圖片 URL
-        },
-        {
-          id: 2,
-          name: '商品2',
-          description: '這是商品2的描述',
-          price: '$30.00',
-          image: 'https://source.unsplash.com/202x202/?product' // 假的圖片 URL
-        },
-      ]
+      products: []
     };
+  },
+  mounted() {
+    this.fetchProducts();
+  },
+  methods: {
+    fetchProducts() {
+      axios.get('http://localhost:8000/api/products')
+          .then(response => {
+            this.products = response.data;
+          })
+          .catch(error => {
+            console.error('Error fetching products:', error);
+          });
+    }
   }
-
 }
 </script>
 
 <style lang="scss" scoped>
-
-//// 測試用
-//* {
-//  border: solid 1px black;
-//}
-//
-//.product-box * {
-//  border: solid 1px;
-//}
-
-
-
 // 橫幅樣式
 .banner {
   height: 48rem;

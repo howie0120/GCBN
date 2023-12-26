@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
 <!--    登入表單-->
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
+    <el-form ref="loginForm" :model="loginForm" class="login-form" auto-complete="on" label-position="left">
 
       <el-form-item prop="username">
         <span class="svg-container">
@@ -23,10 +23,8 @@
           <svg-icon icon-class="password" />
         </span>
         <el-input
-            :key="passwordType"
             ref="password"
             v-model="loginForm.password"
-            :type="passwordType"
             placeholder="請輸入密碼"
             name="password"
             tabindex="2"
@@ -35,7 +33,7 @@
         />
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" class="custom-button" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登入</el-button>
+      <el-button type="primary" class="custom-button" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登入</el-button>
     </el-form>
   </div>
 </template>
@@ -61,7 +59,6 @@ export default {
     handleLogin() {
       this.$refs.loginForm.validate(async (valid) => {
         if (!valid) return;
-        this.loading = true;
         try {
           const response = await axios.post('http://localhost:8000/api/login', {
             email: this.loginForm.username,
@@ -69,10 +66,8 @@ export default {
           });
           this.$store.commit('user/SET_IS_LOGGED_IN', true);
           this.$message.success("登入成功！");
-          this.loading = false;
         } catch (error) {
-          this.$message.success("登入失敗！");
-          this.loading = false;
+          this.$message.error("登入失敗！");
         }
       });
     },

@@ -34,8 +34,6 @@ import axios from 'axios';
 
 export default {
   name: 'Dashboard',
-
-
   data() {
     return {
       products: []
@@ -47,12 +45,12 @@ export default {
   methods: {
     fetchProducts() {
       axios.get('http://localhost:8000/api/products')
-          .then(response => {
-            this.products = response.data;
-          })
-          .catch(error => {
-            console.error('Error fetching products:', error);
-          });
+        .then(response => {
+          this.products = response.data;
+        })
+        .catch(error => {
+          console.error('Error fetching products:', error);
+        });
     }
   }
 }
@@ -286,5 +284,9 @@ i {
     width: 100%;
   }
 }
-
+.btn.faded {
+  opacity: 0.6; /* 讓按鈕顯得更淡 */
+  cursor: default; /* 更改滑鼠樣式 */
+  pointer-events: none; /* 禁止點擊事件 */
+}
 </style>

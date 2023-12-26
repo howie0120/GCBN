@@ -82,20 +82,9 @@ router.post('/login', (req, res) => {
     });
 });
 
-router.get('/groupbuys', async (req, res) => {
-    try {
-        // 假设 getGroupBuys 是从数据库获取数据的函数
-        const groupBuys = await getGroupBuys();
-        res.json(groupBuys);
-    } catch (error) {
-        console.error(error);
-        res.status(500).send("Internal Server Error");
-    }
-});
-
-router.get('/products', (req, res) => {
+router.get('/groupbuys', (req, res) => {
     let conn = new DBHelper().getConn();
-    const query = 'SELECT ProductName, Description, Price, ImageUrl FROM Products';
+    const query = 'SELECT * FROM GroupBuys';
 
     conn.query(query, (err, results) => {
         if (err) {
@@ -105,6 +94,124 @@ router.get('/products', (req, res) => {
             res.json(results);
         }
         conn.end();
+    });
+});
+
+router.get('/products', (req, res) => {
+    let conn = new DBHelper().getConn();
+    const query = 'SELECT * FROM Products';
+
+    conn.query(query, (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Server error');
+        } else {
+            res.json(results);
+        }
+        conn.end();
+    });
+});
+
+
+router.post('/addToCart', (req, res) => {
+    let conn = new DBHelper().getConn();
+    const { userID, productID, quantity } = req.body;
+
+    conn.beginTransaction(err =>{
+        if (err) {
+            console.error(err);
+            res.status(500).send('Server error');
+            conn.end();
+            return;
+    }
+
+    conn.query('SELECT UserID FROM Carts WHERE UserID = ?', [userID], (err, cartResults) => {
+        if (err) {
+            conn.rollback(() => {
+                res.status(500).send('Server error');
+                conn.end();
+            });
+            return;
+        }
+
+        let cartID;
+        if (cartResults.length === 0) {
+            // 如果購物車不存在，則創建一個新的購物車
+            conn.query('INSERT INTO Carts (UserID) VALUES (?)', [userID], (err, cartInsertResult) => {
+                if (err) {
+                    conn.rollback(() => {
+                        res.status(500).send('Server error');
+                        conn.end();
+                    });
+                    return;
+                }
+                cartID = cartInsertResult.insertId;
+                insertOrUpdateCartItem();
+            });
+        } else {
+            cartID = cartResults[0].CartID;
+            insertOrUpdateCartItem();
+        }
+
+        function insertOrUpdateCartItem() {
+            // 检查购物车项是否存在
+            conn.query('SELECT CartItemID FROM CartItems WHERE CartID = ? AND ProductID = ?', [cartID, productID], (err, cartItemResults) => {
+                if (err) {
+                    conn.rollback(() => {
+                        res.status(500).send('Server error');
+                        conn.end();
+                    });
+                    return;
+                }
+
+                if (cartItemResults.length === 0) {
+                    // 如果购物车项不存在，插入新的购物车项
+                    conn.query('INSERT INTO CartItems (CartID, ProductID, Quantity) VALUES (?, ?, ?)', [cartID, productID, quantity], (err, insertResult) => {
+                        if (err) {
+                            conn.rollback(() => {
+                                res.status(500).send('Server error');
+                                conn.end();
+                            });
+                            return;
+                        }
+                        conn.commit(err => {
+                            if (err) {
+                                conn.rollback(() => {
+                                    res.status(500).send('Server error');
+                                    conn.end();
+                                });
+                                return;
+                            }
+                            res.send('Product added to cart');
+                            conn.end();
+                        });
+                    });
+                } else {
+                    // 如果购物车项已存在，更新其数量
+                    conn.query('UPDATE CartItems SET Quantity = Quantity + ? WHERE CartID = ? AND ProductID = ?', [quantity, cartID, productID], (err, updateResult) => {
+                        if (err) {
+                            conn.rollback(() => {
+                                res.status(500).send('Server error');
+                                conn.end();
+                            });
+                            return;
+                        }
+                        conn.commit(err => {
+                            if (err) {
+                                conn.rollback(() => {
+                                    res.status(500).send('Server error');
+                                    conn.end();
+                                });
+                                return;
+                            }
+                            res.send('Product quantity updated in cart');
+                            conn.end();
+                            });
+                        });
+                    }
+                });
+            }
+        });
     });
 });
 

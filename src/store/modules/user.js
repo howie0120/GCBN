@@ -7,6 +7,7 @@ import { resetRouter } from '@/router/route'
 const getDefaultState = () => {
     return {
         token: getToken(),
+        id: '',
         name: '',
         avatar: '',
         isLoggedIn: false
@@ -31,11 +32,14 @@ const mutations = {
     SET_IS_LOGGED_IN: (state, isLoggedIn) => {
         state.isLoggedIn = isLoggedIn;
     },
+    SET_ID: (state, id) => {
+        state.id = id;
+    }
 }
 
 const actions = {
     // user login
-    login({ commit }, userInfo) {
+    login({ commit, dispatch }, userInfo) {
         const { username, password } = userInfo
         return new Promise((resolve, reject) => {
             login({ username: username.trim(), password: password }).then(response => {
@@ -43,6 +47,11 @@ const actions = {
                 commit('SET_TOKEN', data.token)
                 setToken(data.token)
                 commit('SET_IS_LOGGED_IN', true);
+
+                // 獲取使用者資訊
+                dispatch('getInfo').then(() => {
+                    resolve()
+                });
                 resolve()
             }).catch(error => {
                 reject(error)
@@ -60,8 +69,8 @@ const actions = {
                     return reject('Verification failed, please Login again.')
                 }
 
-                const { name, avatar } = data
-
+                const { id, name, avatar } = data
+                commit('SET_ID', id)
                 commit('SET_NAME', name)
                 commit('SET_AVATAR', avatar)
                 resolve(data)
@@ -92,8 +101,7 @@ const actions = {
             commit('RESET_STATE')
             resolve()
         })
-    }
-
+    },
 }
 
 export default {

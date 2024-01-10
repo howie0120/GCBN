@@ -62,9 +62,14 @@ export default {
         try {
           const response = await axios.post('http://localhost:8000/api/login', {
             email: this.loginForm.username,
-            password: this.loginForm.password
+            password: this.loginForm.password,
           });
+          const { token, userId, permissions} = response.data;
+          console.log(response);
           this.$store.commit('user/SET_IS_LOGGED_IN', true);
+          this.$store.commit('user/SET_ID', userId);
+          this.$store.commit('user/SET_TOKEN', token);
+          this.$store.commit('user/SET_P', permissions);
           this.$message.success("登入成功！");
         } catch (error) {
           this.$message.error("登入失敗！");
@@ -72,7 +77,6 @@ export default {
       });
     },
   }
-
 }
 </script>
 

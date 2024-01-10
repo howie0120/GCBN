@@ -31,6 +31,9 @@
 </template>
 
 <script>
+
+import axios from 'axios';
+
 export default {
   data() {
     return {
@@ -46,16 +49,43 @@ export default {
       }
     }
   },
-  methods: {
-    onSubmit() {
-      this.$message('團購已發起!')
-    },
-    onCancel() {
-      this.$message({
-        message: '已取消!',
-        type: 'warning'
-      })
+
+  computed: {
+    userID() {
+      return this.$store.getters.id;
     }
+  },
+  methods: {
+    async onSubmit() {
+      try {
+        const userID = this.userID;
+        const response = await axios.post('http://localhost:8000/api/groupbuy/create', {
+          ...this.form,
+          InitiatorUserID: userID,
+          TargetQuantity: this.form.groupSize, // 假設目標數量等於團購人數
+          CurrentQuantity: 0, // 初始當前數量為 0
+          Status: '審核中' // 初始狀態為審核中
+        });
+        this.$message.success('團購已發起!');
+
+        console.log(response);
+
+        // 清除表單
+        this.form = {
+          productName: '',
+          groupSize: 1,
+          price: 0,
+          productUrl: '',
+          description: '',
+          startDate: '',
+          endDate: '',
+          image: ''
+        };
+      } catch (error) {
+        console.error(error);
+        this.$message.error('發起失敗!');
+      }
+    },
   }
 }
 </script>

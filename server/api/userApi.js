@@ -7,6 +7,8 @@ const router = express.Router();
 const $sql = require('../mysql/sqlMap');
 const DBHelper = require('../mysql/database');
 
+const addCartItem = require('../controllers/cartController');
+
 //增加用戶
 router.post('/add', (req, res) => {
     let conn = new DBHelper().getConn();
@@ -75,8 +77,13 @@ router.post('/login', (req, res) => {
             res.status(401).send("-1"); // 身份驗證失敗
             conn.end();
         } else {
-            // 生成 token 或執行其他身份驗證成功後的操作
-            res.send({ token: "0" }); // 身份驗證成功
+            let userId = results[0].UserID;
+            let permissions = results[0].Permissions;
+            res.send({
+                token: "0",
+                userId: userId,
+                permissions: permissions,
+            }); // 身份驗證成功
             conn.end();
         }
     });
@@ -84,7 +91,7 @@ router.post('/login', (req, res) => {
 
 router.get('/groupbuys', (req, res) => {
     let conn = new DBHelper().getConn();
-    const query = 'SELECT * FROM GroupBuys';
+    const query = "SELECT * FROM GroupBuys WHERE Status = '進行中'";
 
     conn.query(query, (err, results) => {
         if (err) {
@@ -93,6 +100,25 @@ router.get('/groupbuys', (req, res) => {
         } else {
             res.json(results);
         }
+        conn.end();
+    });
+});
+
+router.post('/groupbuy/create', (req, res) => {
+    const { initiatorUserID, productName, groupSize, description, startDate, endDate } = req.body;
+    let conn = new DBHelper().getConn();
+
+    conn.query($sql.groupbuy.insertSql, [
+        initiatorUserID, groupSize, startDate, endDate, '審核中', description, productName
+    ], (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('伺服器錯誤');
+            conn.end();
+            return;
+        }
+
+        res.json({ message: '團購創建成功', groupBuyId: result.insertId });
         conn.end();
     });
 });
@@ -125,7 +151,7 @@ router.post('/addToCart', (req, res) => {
             return;
     }
 
-    conn.query('SELECT UserID FROM Carts WHERE UserID = ?', [userID], (err, cartResults) => {
+    conn.query('SELECT CartID FROM Carts WHERE UserID = ?', [userID], (err, cartResults) => {
         if (err) {
             conn.rollback(() => {
                 res.status(500).send('Server error');
@@ -154,7 +180,7 @@ router.post('/addToCart', (req, res) => {
         }
 
         function insertOrUpdateCartItem() {
-            // 检查购物车项是否存在
+            // 檢查購物車是否存在
             conn.query('SELECT CartItemID FROM CartItems WHERE CartID = ? AND ProductID = ?', [cartID, productID], (err, cartItemResults) => {
                 if (err) {
                     conn.rollback(() => {
@@ -165,7 +191,6 @@ router.post('/addToCart', (req, res) => {
                 }
 
                 if (cartItemResults.length === 0) {
-                    // 如果购物车项不存在，插入新的购物车项
                     conn.query('INSERT INTO CartItems (CartID, ProductID, Quantity) VALUES (?, ?, ?)', [cartID, productID, quantity], (err, insertResult) => {
                         if (err) {
                             conn.rollback(() => {
@@ -187,7 +212,7 @@ router.post('/addToCart', (req, res) => {
                         });
                     });
                 } else {
-                    // 如果购物车项已存在，更新其数量
+                    // 如果購物車存在更新數量
                     conn.query('UPDATE CartItems SET Quantity = Quantity + ? WHERE CartID = ? AND ProductID = ?', [quantity, cartID, productID], (err, updateResult) => {
                         if (err) {
                             conn.rollback(() => {
@@ -212,6 +237,102 @@ router.post('/addToCart', (req, res) => {
                 });
             }
         });
+    });
+});
+
+router.post('/cartItems', async (req, res) => {
+    try {
+        const { userId, productId, quantity } = req.body;
+        const result = await addCartItem(userId, productId, quantity);
+
+        res.status(200).json({ message: 'Item added to cart', data: result });
+    } catch (error) {
+        console.error('Error adding item to cart:', error);
+        res.status(500).json({ message: 'Error adding item to cart' });
+    }
+});
+
+router.get('/cartItems', (req, res) => {
+    let conn = new DBHelper().getConn();
+    const userID = req.query.userID;
+
+    conn.query($sql.cart.getCartItems, [userID], (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Server error');
+        } else {
+            res.json(results);
+        }
+        conn.end();
+    });
+});
+
+
+router.post('/updateCartItemQuantity', (req, res) => {
+    const { cartItemId, quantity } = req.body;
+    const update_sql = 'UPDATE CartItems SET Quantity = ? WHERE CartItemId = ?';
+
+    let conn = new DBHelper().getConn();
+    conn.query(update_sql, [quantity, cartItemId], (err, result) => {
+        if (err) {
+            console.error('Error updating cart item quantity:', err);
+            res.status(500).send('Server error');
+            conn.end();
+            return;
+        }
+        res.send({ message: 'Quantity updated successfully' });
+        conn.end();
+    });
+});
+
+router.post('/removeCartItem', (req, res) => {
+    let conn = new DBHelper().getConn();
+    const { cartItemId } = req.body;
+
+    const query = 'DELETE FROM CartItems WHERE CartItemID = ?';
+
+    conn.query(query, [cartItemId], (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Server error');
+            conn.end();
+            return;
+        }
+        res.send('Item removed successfully');
+        conn.end();
+    });
+});
+
+router.get('/groupbuys/pending', (req, res) => {
+    let conn = new DBHelper().getConn();
+    const query = "SELECT * FROM GroupBuys WHERE Status = '審核中'";
+
+    conn.query(query, (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Server error');
+        } else {
+            res.json(results);
+        }
+        conn.end();
+    });
+});
+
+router.post('/groupbuy/updateStatus', (req, res) => {
+    const { groupBuyId, newStatus } = req.body;
+    let conn = new DBHelper().getConn();
+    const query = "UPDATE GroupBuys SET Status = ? WHERE GroupBuyID = ?";
+
+    conn.query(query, [newStatus, groupBuyId], (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('伺服器錯誤');
+            conn.end();
+            return;
+        }
+
+        res.json({ message: '團購狀態更新成功' });
+        conn.end();
     });
 });
 

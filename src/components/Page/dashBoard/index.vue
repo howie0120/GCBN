@@ -20,7 +20,7 @@
             <div class="texts">
               <span class="product-price">${{ product.Price }}</span>
             </div>
-            <button class="btn">購買</button>
+            <button class="btn" @click="addToCart(product)">購買</button>
             <div class="BoxBar"></div>
           </div>
         </div>
@@ -31,7 +31,6 @@
 
 <script>
 import axios from 'axios';
-
 export default {
   name: 'Dashboard',
   data() {
@@ -42,6 +41,11 @@ export default {
   mounted() {
     this.fetchProducts();
   },
+  computed: {
+    userID() {
+      return this.$store.getters.id;
+    }
+  },
   methods: {
     fetchProducts() {
       axios.get('http://localhost:8000/api/products')
@@ -51,6 +55,20 @@ export default {
         .catch(error => {
           console.error('Error fetching products:', error);
         });
+    },
+
+    addToCart(product) {
+      axios.post('http://localhost:8000/api/addToCart', {
+        productID: product.ProductID,
+        userID: this.userID,
+        quantity: 1
+      })
+      .then(response => {
+        console.log("新增到購物車", response)
+      })
+      .catch(error => {
+        console.error('Error', error)
+      });
     }
   }
 }

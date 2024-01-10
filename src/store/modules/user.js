@@ -10,7 +10,8 @@ const getDefaultState = () => {
         id: '',
         name: '',
         avatar: '',
-        isLoggedIn: false
+        isLoggedIn: false,
+        permissions: ''
     }
 }
 
@@ -34,24 +35,25 @@ const mutations = {
     },
     SET_ID: (state, id) => {
         state.id = id;
-    }
+    },
+    SET_P: (state, permissions) => {
+        state.permissions = permissions;
+    },
 }
 
 const actions = {
     // user login
-    login({ commit, dispatch }, userInfo) {
-        const { username, password } = userInfo
+    login({ commit }, userInfo) {
+        const { username, password } = userInfo;
+
         return new Promise((resolve, reject) => {
             login({ username: username.trim(), password: password }).then(response => {
-                const { data } = response
-                commit('SET_TOKEN', data.token)
-                setToken(data.token)
+                const { token, UserId, permissions } = response.data
+                commit('SET_TOKEN', token)
+                setToken(token)
+                commit('SET_ID', UserId);
+                commit('SET_P', permissions)
                 commit('SET_IS_LOGGED_IN', true);
-
-                // 獲取使用者資訊
-                dispatch('getInfo').then(() => {
-                    resolve()
-                });
                 resolve()
             }).catch(error => {
                 reject(error)
@@ -63,21 +65,22 @@ const actions = {
     getInfo({ commit, state }) {
         return new Promise((resolve, reject) => {
             getInfo(state.token).then(response => {
-                const { data } = response
+                const { data } = response;
 
                 if (!data) {
-                    return reject('Verification failed, please Login again.')
+                    return reject('Verification failed, please Login again.');
                 }
 
-                const { id, name, avatar } = data
-                commit('SET_ID', id)
-                commit('SET_NAME', name)
-                commit('SET_AVATAR', avatar)
-                resolve(data)
+                const { id, name, avatar } = data;
+                console.log('Setting userID:', id);
+                commit('SET_ID', id);
+                commit('SET_NAME', name);
+                commit('SET_AVATAR', avatar);
+                resolve(data);
             }).catch(error => {
-                reject(error)
-            })
-        })
+                reject(error);
+            });
+        });
     },
 
     // user logout

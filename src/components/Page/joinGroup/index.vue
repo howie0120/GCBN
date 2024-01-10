@@ -6,7 +6,7 @@
           <img :src="groupBuy.ImageUrl" alt="Product Image" class="product-image">
         </div>
         <div class="product-box-bottom">
-          <h1 class="product-name">{{ (groupBuy.Description) }}</h1>
+          <h1 class="product-name">{{ (groupBuy.Name) }}</h1>
           <div class="progressbar">
             <div class="valuebar" :style="{ width: calculateProgress(groupBuy) + '%' }"></div>
           </div>
@@ -184,10 +184,11 @@ i {
 .product-box-top .product-image {
   width: 100%;
   height: 100%;
+  min-width: 256px;
+  min-height: 256px;
   object-fit: cover; // 確保圖片填滿並不失真
   border-radius: 5px 5px 0 0;
 }
-
 
 .product-box-top .productBtn:hover {
   background-color: #EB5E00;
